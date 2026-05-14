@@ -1,3 +1,5 @@
+
+
 <!DOCTYPE html>
 <html lang="ja">
 <head>
@@ -863,11 +865,7 @@ async function loadFromGitHub() {
       }
     }
     // Takezo Farmをデフォルトで表示
-    currentDoc = 'construction';
-    document.getElementById('tabS').className = 'tb';
-    document.getElementById('tabK').className = 'tb on';
-    renderSidebar();
-    renderPreview();
+    switchDoc('construction');
   } catch(e) {}
 }
 
@@ -1040,11 +1038,7 @@ for(var di=0; di<initDocs.length; di++) {
 }
 applyAdminUI();
 // Takezo Farmをデフォルトで表示
-currentDoc = 'construction';
-document.getElementById('tabS').className = 'tb';
-document.getElementById('tabK').className = 'tb on';
-renderSidebar();
-renderPreview();
+switchDoc('construction');
 // GitHubから最新ひな形を非同期で読み込む
 loadFromGitHub();
 </script></body></html>
