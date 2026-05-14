@@ -1027,6 +1027,10 @@ for(var di=0; di<initDocs.length; di++) {
   }
 }
 applyAdminUI();
+// Takezo Farmをデフォルトで表示
+currentDoc = 'construction';
+document.getElementById('tabS').className = 'tb';
+document.getElementById('tabK').className = 'tb on';
 renderSidebar();
 renderPreview();
 // GitHubから最新ひな形を非同期で読み込む
