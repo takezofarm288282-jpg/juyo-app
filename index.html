@@ -851,7 +851,7 @@ async function loadFromGitHub() {
     var res = await fetch(url);
     if(!res.ok) return;
     var saved = await res.json();
-    if(saved.data) data = cleanData(saved.data);
+    if(saved.data) data = saved.data;
     if(saved.covers) COVERS = saved.covers;
     if(saved.fixed) FIXED_CHECKED = saved.fixed;
     if(saved.imgData) IMG_DATA = saved.imgData;
