@@ -199,8 +199,8 @@ body{font-family:Meiryo,'Yu Gothic',sans-serif;background:var(--bg);color:var(--
     <div class="hdr-title">タケダ造園 <span>重要事項説明書</span></div>
   </div>
   <div class="hdr-tabs">
-    <button class="tb on" id="tabS" onclick="switchDoc('service')">🌿 サッパリーズ</button>
-    <button class="tb" id="tabK" onclick="switchDoc('construction')">🏗 Takezo Farm</button>
+    <button class="tb" id="tabS" onclick="switchDoc('service')">🌿 サッパリーズ</button>
+    <button class="tb on" id="tabK" onclick="switchDoc('construction')">🏗 Takezo Farm</button>
     <button class="tb" id="tabE" onclick="switchMode('edit')" style="display:none;">✏️ 編集</button>
     <button class="tb" id="adminBtn" onclick="toggleAdminMode()">🔑</button>
   </div>
@@ -304,7 +304,7 @@ var GITHUB_REPO = 'juyo-app';
 var GITHUB_FILE = 'data.json';
 var githubToken = '';
 var isAdminMode = false;
-var currentDoc = 'service';
+var currentDoc = 'construction';
 var currentMode = 'preview';
 var data;
 
@@ -557,7 +557,7 @@ function buildPrintHTML() {
 
   for(var j=0;j<items.length;j++) {
     var item = items[j];
-    h += '<div style="font-family:Meiryo,sans-serif;margin-bottom:16px;page-break-inside:avoid;">';
+    h += '<div style="font-family:Meiryo,sans-serif;margin-bottom:16px;page-break-before:always;">';
     h += '<h2 style="font-size:12px;background:#1a6b3c;color:#fff;padding:7px 16px;margin:0;">' + esc(item.label) + '</h2>';
     h += '<div style="border:1px solid #ccc;border-top:none;padding:10px 16px;">';
     for(var k=0;k<item.content.length;k++) {
@@ -1017,7 +1017,15 @@ var mm = String(td.getMonth()+1).padStart(2,'0');
 var dd = String(td.getDate()).padStart(2,'0');
 document.getElementById('custDate').value = td.getFullYear() + '-' + mm + '-' + dd;
 loadData();
-loadCheckState();
+// 起動時は固定項目以外のチェックをすべて外す
+var initDocs = ['service','construction'];
+for(var di=0; di<initDocs.length; di++) {
+  for(var ii=0; ii<data[initDocs[di]].length; ii++) {
+    if(!isFixed(initDocs[di], data[initDocs[di]][ii].label)) {
+      data[initDocs[di]][ii].checked = false;
+    }
+  }
+}
 applyAdminUI();
 renderSidebar();
 renderPreview();
