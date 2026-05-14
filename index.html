@@ -847,13 +847,25 @@ async function loadFromGitHub() {
   try {
     var url = 'https://raw.githubusercontent.com/' + GITHUB_USER + '/' + GITHUB_REPO + '/main/data.json?t=' + Date.now();
     var res = await fetch(url);
-    if(!res.ok) return; // data.jsonがまだない場合はスキップ
+    if(!res.ok) return;
     var saved = await res.json();
     if(saved.data) data = cleanData(saved.data);
     if(saved.covers) COVERS = saved.covers;
     if(saved.fixed) FIXED_CHECKED = saved.fixed;
     if(saved.imgData) IMG_DATA = saved.imgData;
-    loadCheckState();
+    // 起動時は固定項目以外のチェックをすべて外す
+    var docs = ['service','construction'];
+    for(var d=0; d<docs.length; d++) {
+      for(var i=0; i<data[docs[d]].length; i++) {
+        if(!isFixed(docs[d], data[docs[d]][i].label)) {
+          data[docs[d]][i].checked = false;
+        }
+      }
+    }
+    // Takezo Farmをデフォルトで表示
+    currentDoc = 'construction';
+    document.getElementById('tabS').className = 'tb';
+    document.getElementById('tabK').className = 'tb on';
     renderSidebar();
     renderPreview();
   } catch(e) {}
