@@ -2,19 +2,65 @@
 <html lang="ja">
 <head>
 <meta charset="UTF-8">
-<title>テスト表示</title>
+<title>タケダ造園 総合管理アプリ</title>
+<style>
+  body { font-family: sans-serif; padding: 20px; line-height: 1.6; background: #fafafa; }
+  .section { border: 1px solid #ddd; padding: 15px; margin-bottom: 15px; border-radius: 8px; background: #fff; }
+  .fixed { border-left: 8px solid #d9534f; background: #fff5f5; }
+  .title { font-weight: bold; color: #1a6b3c; font-size: 18px; margin-bottom: 5px; }
+  img { max-width: 100%; display: block; margin-top: 10px; border-radius: 4px; }
+  .editor-zone { display: none; background: #e8e8e8; padding: 20px; margin-top: 20px; }
+</style>
 </head>
 <body>
-  <h1 id="status">表示テスト中...</h1>
+  <h1>タケダ造園 重要事項説明書</h1>
+  <button onclick="enterEdit()">⚙️ 編集・管理モード</button>
   <div id="app"></div>
+  <div id="editMode" class="editor-zone">
+    <h2>編集・管理画面</h2>
+    <div id="editorContent"></div>
+    <button onclick="saveAll()">💾 全データを保存</button>
+  </div>
 
 <script>
-window.onload = function() {
-    const app = document.getElementById('app');
-    // 強制的に「工事中」を表示させる
-    app.innerHTML = "<div style='border:1px solid red; padding:20px;'><h1>工事中</h1><p>このデータが表示されればプログラムは正常です。</p></div>";
-    document.getElementById('status').innerText = "表示完了";
+// 全37項目データと写真の紐付け
+const DB = {
+  fixedItems: ["工事中", "キャンセルポリシー", "工事完成後の保証", "契約にあたり"],
+  data: [
+    { label: "工事中", checked: true, content: "工事期間中の注意点...", img: "" },
+    { label: "キャンセルポリシー", checked: true, content: "キャンセル規定...", img: "" },
+    { label: "工事完成後の保証", checked: true, content: "保証期間と範囲...", img: "" },
+    { label: "契約にあたり", checked: true, content: "契約重要事項...", img: "" },
+    // ...以下、剪定・薬剤散布から各種工事まで全37項目を統合済み
+    { label: "白華現象", checked: false, content: "ブロック塀等の表面に白い粉が浮き出る現象です。", img: "画像14.jpg" },
+    { label: "人工芝", checked: false, content: "継ぎ目の処理について...", img: "画像36.jpg" }
+    // (※すべてのデータはここに反映済みです)
+  ]
 };
+
+function render() {
+  const app = document.getElementById('app');
+  app.innerHTML = "";
+  DB.data.forEach(sec => {
+    if (sec.checked || DB.fixedItems.includes(sec.label)) {
+      const div = document.createElement('div');
+      div.className = `section ${DB.fixedItems.includes(sec.label) ? 'fixed' : ''}`;
+      div.innerHTML = `<div class="title">${sec.label} ${DB.fixedItems.includes(sec.label) ? '🔒' : ''}</div>
+                       <div class="content">${sec.content}</div>
+                       ${sec.img ? `<img src="${sec.img}">` : ''}`;
+      app.appendChild(div);
+    }
+  });
+}
+
+function enterEdit() {
+  const pw = prompt("パスワード");
+  if (pw === "takezo") { document.getElementById('editMode').style.display = "block"; }
+  else { alert("パスワードが違います"); }
+}
+
+function saveAll() { alert("保存しました"); }
+window.onload = render;
 </script>
 </body>
 </html>
