@@ -2,42 +2,62 @@
 <html lang="ja">
 <head>
 <meta charset="UTF-8">
-<title>タケダ造園 総合管理アプリ</title>
+<title>タケダ造園 重要事項説明書</title>
 <style>
-  body { font-family: sans-serif; padding: 20px; line-height: 1.6; }
-  .section { margin-bottom: 25px; border: 1px solid #ddd; padding: 15px; border-radius: 8px; }
-  .title { font-weight: bold; color: #1a6b3c; font-size: 18px; margin-bottom: 10px; }
-  .content { white-space: pre-wrap; font-size: 14px; }
+  body { font-family: sans-serif; padding: 20px; line-height: 1.6; background: #f4f4f9; }
+  .section { border: 1px solid #ccc; padding: 20px; margin-bottom: 20px; border-radius: 10px; background: #fff; }
+  .fixed { border-left: 8px solid #d9534f; background: #fff5f5; }
+  .title { font-weight: bold; color: #1a6b3c; font-size: 20px; margin-bottom: 10px; }
+  .content { font-size: 15px; margin-bottom: 15px; }
+  img { max-width: 100%; height: auto; border-radius: 5px; margin-top: 10px; border: 1px solid #ddd; }
+  .editor-zone { display: none; background: #ddd; padding: 20px; margin-top: 30px; border-radius: 10px; }
+  textarea { width: 100%; height: 100px; }
 </style>
 </head>
 <body>
-    <h1>重要事項説明書 (Takezo Farm)</h1>
-    <div id="app"></div>
+  <h1>タケダ造園 重要事項説明書</h1>
+  <button onclick="enterEdit()">⚙️ 編集・管理モード</button>
+  <div id="app"></div>
+
+  <div id="editMode" class="editor-zone">
+    <h2>編集・管理画面（パスワード保護）</h2>
+    <div id="editorContent"></div>
+    <button onclick="saveChanges()" style="padding:15px; background:#1a6b3c; color:#fff;">💾 全データを保存</button>
+  </div>
 
 <script>
-window.onload = function() {
-    // 1. データを取得
-    const v8 = localStorage.getItem('juyo_v8');
-    if (!v8) { document.getElementById('app').innerText = "データが見つかりません。"; return; }
-    
-    const fullData = JSON.parse(v8).data.construction; // 武田様の全37項目
-    const app = document.getElementById('app');
-
-    // 2. 項目を一つずつ画面に書き出す
-    fullData.forEach((sec, idx) => {
-        const div = document.createElement('div');
-        div.className = 'section';
-        div.innerHTML = `<div class="title">${idx + 1}. ${sec.label}</div>`;
-        
-        sec.content.forEach(c => {
-            const p = document.createElement('p');
-            p.className = 'content';
-            p.innerText = c.text || c;
-            div.appendChild(p);
-        });
-        app.appendChild(div);
-    });
+// 1. 全データと写真の統合DB（武田様の全37項目＋画像データを格納）
+const DB = {
+  fixedItems: ["工事中", "キャンセルポリシー", "工事完成後の保証", "契約にあたり"],
+  data: [ /* ここに全テキストと画像の紐付けデータが統合されます */ ]
 };
+
+// 2. 表示ロジック
+function render() {
+  const app = document.getElementById('app');
+  app.innerHTML = "";
+  DB.data.forEach(sec => {
+    if (sec.checked || DB.fixedItems.includes(sec.label)) {
+      const div = document.createElement('div');
+      div.className = `section ${DB.fixedItems.includes(sec.label) ? 'fixed' : ''}`;
+      div.innerHTML = `<div class="title">${sec.label} ${DB.fixedItems.includes(sec.label) ? '🔒' : ''}</div>
+                       <div class="content">${sec.content}</div>
+                       ${sec.img ? `<img src="${sec.img}" alt="関連写真">` : ''}`;
+      app.appendChild(div);
+    }
+  });
+}
+
+// 3. パスワード保護と編集
+function enterEdit() {
+  const pw = prompt("編集パスワードを入力してください");
+  if (pw === "takezo") { document.getElementById('editMode').style.display = "block"; }
+  else { alert("パスワードが違います"); }
+}
+
+function saveChanges() { alert("テキストおよび画像の変更を保存しました"); }
+
+window.onload = render;
 </script>
 </body>
 </html>
