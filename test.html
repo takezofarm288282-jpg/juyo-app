@@ -4,60 +4,62 @@
 <meta charset="UTF-8">
 <title>タケダ造園 重要事項説明書</title>
 <style>
-  body { font-family: sans-serif; padding: 20px; line-height: 1.6; background: #f4f4f9; }
-  .section { border: 1px solid #ccc; padding: 20px; margin-bottom: 20px; border-radius: 10px; background: #fff; }
+  body { font-family: sans-serif; padding: 20px; line-height: 1.6; }
+  .section { border: 1px solid #ccc; padding: 15px; margin-bottom: 20px; border-radius: 8px; }
   .fixed { border-left: 8px solid #d9534f; background: #fff5f5; }
   .title { font-weight: bold; color: #1a6b3c; font-size: 20px; margin-bottom: 10px; }
-  .content { font-size: 15px; margin-bottom: 15px; }
-  img { max-width: 100%; height: auto; border-radius: 5px; margin-top: 10px; border: 1px solid #ddd; }
-  .editor-zone { display: none; background: #ddd; padding: 20px; margin-top: 30px; border-radius: 10px; }
-  textarea { width: 100%; height: 100px; }
+  .editor-zone { display: none; background: #eee; padding: 20px; margin-top: 30px; }
 </style>
 </head>
 <body>
   <h1>タケダ造園 重要事項説明書</h1>
-  <button onclick="enterEdit()">⚙️ 編集・管理モード</button>
+  <button onclick="enterEdit()">⚙️ 編集モードへ入る（要パスワード）</button>
   <div id="app"></div>
 
   <div id="editMode" class="editor-zone">
-    <h2>編集・管理画面（パスワード保護）</h2>
+    <h2>編集・管理画面</h2>
     <div id="editorContent"></div>
-    <button onclick="saveChanges()" style="padding:15px; background:#1a6b3c; color:#fff;">💾 全データを保存</button>
+    <button onclick="saveChanges()">💾 全データを保存</button>
   </div>
 
 <script>
-// 1. 全データと写真の統合DB（武田様の全37項目＋画像データを格納）
+// データと写真紐付け
 const DB = {
   fixedItems: ["工事中", "キャンセルポリシー", "工事完成後の保証", "契約にあたり"],
-  data: [ /* ここに全テキストと画像の紐付けデータが統合されます */ ]
+  data: [ /* 全37項目データ */ ]
 };
 
-// 2. 表示ロジック
-function render() {
+// 1. ページを開いたら即座に表示（閲覧はパスワード不要）
+function renderDisplay() {
   const app = document.getElementById('app');
   app.innerHTML = "";
   DB.data.forEach(sec => {
     if (sec.checked || DB.fixedItems.includes(sec.label)) {
       const div = document.createElement('div');
       div.className = `section ${DB.fixedItems.includes(sec.label) ? 'fixed' : ''}`;
-      div.innerHTML = `<div class="title">${sec.label} ${DB.fixedItems.includes(sec.label) ? '🔒' : ''}</div>
+      div.innerHTML = `<div class="title">${sec.label}</div>
                        <div class="content">${sec.content}</div>
-                       ${sec.img ? `<img src="${sec.img}" alt="関連写真">` : ''}`;
+                       ${sec.img ? `<img src="${sec.img}" style="max-width:300px;">` : ''}`;
       app.appendChild(div);
     }
   });
 }
 
-// 3. パスワード保護と編集
+// 2. 編集ボタンを押した時だけパスワード認証
 function enterEdit() {
-  const pw = prompt("編集パスワードを入力してください");
-  if (pw === "takezo") { document.getElementById('editMode').style.display = "block"; }
-  else { alert("パスワードが違います"); }
+  const pw = prompt("編集用パスワードを入力してください");
+  if (pw === "takezo") {
+    document.getElementById('editMode').style.display = "block";
+    renderEditor();
+  } else {
+    alert("パスワードが違います");
+  }
 }
 
-function saveChanges() { alert("テキストおよび画像の変更を保存しました"); }
+function renderEditor() { /* ここに編集用フォームを描画 */ }
+function saveChanges() { alert("保存しました"); }
 
-window.onload = render;
+window.onload = renderDisplay;
 </script>
 </body>
 </html>
