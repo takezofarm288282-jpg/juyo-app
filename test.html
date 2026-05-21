@@ -2,35 +2,50 @@
 <html lang="ja">
 <head>
 <meta charset="UTF-8">
-<title>重要事項説明書（最終修復版）</title>
+<title>重要事項説明書（完全復元版）</title>
+<style>
+  body { font-family: sans-serif; padding: 20px; line-height: 1.6; }
+  .sc { margin-bottom: 20px; border: 1px solid #ccc; padding: 15px; border-radius: 8px; }
+  .sh { font-weight: bold; color: #0f4526; font-size: 18px; margin-bottom: 10px; }
+  .ct { white-space: pre-wrap; }
+  .sec-img { max-width: 200px; margin: 5px; }
+</style>
 </head>
 <body>
-<div id="debug" style="padding:20px; font-family:sans-serif;">
-  <h3>修復プログラムを読み込んでいます...</h3>
-  <div id="status"></div>
-</div>
+  <div id="app">
+    <h3>修復データを読み込み中...</h3>
+  </div>
 
 <script>
 window.onload = function() {
-  const status = document.getElementById('status');
-  
-  // 1. データの有無を確認
   const v9 = localStorage.getItem('juyo_v9');
-  const appData = localStorage.getItem('juyo_app_data');
-  
-  status.innerHTML += "<p>データ確認中...</p>";
-  
-  if (!v9 && !appData) {
-    status.innerHTML += "<p style='color:red;'><strong>【エラー】データが見つかりません。</strong></p>";
-    status.innerHTML += "<p>原因：このブラウザには、重要事項説明書のデータが保存されていません。<br>いつも『編集』や『入力』を行っているブラウザ（Chromeなど）でこのURLを開いていますか？</p>";
+  if (!v9) {
+    document.getElementById('app').innerHTML = "データが見つかりませんでした。";
     return;
   }
   
-  status.innerHTML += "<p style='color:green;'>データを発見しました！プログラムを起動します。</p>";
-  
-  // データがあれば自動的に本来のアプリ画面へ転送します
-  // これまでお使いのHTMLの構造をそのまま利用します
-  location.reload(); // 再読み込みで正常起動を試みます
+  const parsed = JSON.parse(v9);
+  const app = document.getElementById('app');
+  app.innerHTML = "<h1>データ復元完了</h1>";
+
+  // データの構造を解析して画面に書き出す
+  if (parsed.data && parsed.data.construction) {
+    parsed.data.construction.forEach((sec, idx) => {
+      if(sec.checked) {
+        const div = document.createElement('div');
+        div.className = 'sc';
+        div.innerHTML = `<div class="sh">${idx + 1}. ${sec.label}</div>`;
+        
+        sec.content.forEach(c => {
+          const p = document.createElement('p');
+          p.className = 'ct';
+          p.innerText = c.text || c;
+          div.appendChild(p);
+        });
+        app.appendChild(div);
+      }
+    });
+  }
 };
 </script>
 </body>
