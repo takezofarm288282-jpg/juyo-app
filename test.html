@@ -4,40 +4,59 @@
 <meta charset="UTF-8">
 <title>タケダ造園 重要事項説明書</title>
 <style>
-  body { font-family: sans-serif; padding: 20px; line-height: 1.6; }
-  .item-card { border: 2px solid #1a6b3c; padding: 15px; margin-bottom: 20px; border-radius: 8px; }
-  .title { font-weight: bold; font-size: 1.2em; color: #1a6b3c; margin-bottom: 10px; }
-  .section-container { margin-top: 30px; }
+  body { display: flex; font-family: sans-serif; height: 100vh; margin: 0; }
+  /* 左側のメニュー（チェックリスト） */
+  #sidebar { width: 250px; background: #f8f8f8; border-right: 1px solid #ddd; padding: 20px; overflow-y: auto; }
+  /* 右側の詳細エリア */
+  #main-content { flex: 1; padding: 40px; overflow-y: auto; }
+  .item-section { border: 1px solid #ddd; padding: 20px; margin-bottom: 30px; border-radius: 8px; }
+  .item-title { font-weight: bold; color: #1a6b3c; font-size: 1.5em; border-bottom: 2px solid #1a6b3c; margin-bottom: 15px; }
+  img { max-width: 400px; display: block; margin-top: 15px; }
 </style>
 </head>
 <body>
-  <h1>タケダ造園 重要事項説明書</h1>
-  <div id="full-list" class="section-container"></div>
+
+  <div id="sidebar">
+    <h3>重要事項リスト</h3>
+    <div id="checklist"></div>
+  </div>
+
+  <div id="main-content">
+    <div id="display-area"></div>
+  </div>
 
 <script>
-// 全37項目を定義した完全リスト
-const data = [
-  "工事中", "キャンセルポリシー", "工事完成後の保証", "契約にあたり",
-  "剪定", "薬剤散布", "除草", "整地", "ブロック塀", "コンクリート打設",
-  "カーポート設置", "フェンス設置", "ウッドデッキ", "タイルデッキ",
-  "人工芝", "植栽", "石貼り", "照明設置", "散水栓", "排水工事",
-  "白華現象", "クラック", "レベル調整", "資材搬入", "残土処理",
-  "近隣挨拶", "交通誘導", "作業時間", "現場管理", "安全管理",
-  "アフターフォロー", "損害賠償", "天候不順対応", "追加工事",
-  "支払条件", "図面変更", "近隣トラブル対応"
+// 全項目データを定義
+const fullData = [
+  { id: "item1", title: "工事中", content: "工事期間中の注意点...", img: "画像57.jpg" },
+  { id: "item2", title: "フェンス・ブロック塀", content: "ブロック塀等の説明...", img: "画像14.jpg" }
+  // ...ここに全37項目を記述
 ];
 
-// ページを開いた瞬間にすべての項目を描画する命令
+// 初期化：リストと詳細エリアを自動生成
 window.onload = function() {
-  const container = document.getElementById('full-list');
-  container.innerHTML = "";
-  data.forEach(item => {
+  const checklist = document.getElementById('checklist');
+  const display = document.getElementById('display-area');
+
+  fullData.forEach(item => {
+    // チェックボックス作成
+    const label = document.createElement('label');
+    label.innerHTML = `<input type="checkbox" checked onchange="updateView()"> ${item.title}<br>`;
+    checklist.appendChild(label);
+
+    // 詳細エリア作成
     const div = document.createElement('div');
-    div.className = "item-card";
-    div.innerHTML = `<div class="title">${item}</div><p>詳細内容がここに表示されます。</p>`;
-    container.appendChild(div);
+    div.id = "view-" + item.id;
+    div.className = "item-section";
+    div.innerHTML = `<div class="item-title">${item.title}</div><p>${item.content}</p>${item.img ? `<img src="${item.img}">` : ''}`;
+    display.appendChild(div);
   });
 };
+
+// チェックの有無で表示を切り替える機能
+function updateView() {
+  // チェックボックスの状態を見て、対応する詳細エリアの表示/非表示を切り替える
+}
 </script>
 </body>
 </html>
