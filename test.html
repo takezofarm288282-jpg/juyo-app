@@ -2,62 +2,19 @@
 <html lang="ja">
 <head>
 <meta charset="UTF-8">
-<title>タケダ造園 重要事項説明書</title>
-<style>
-  body { font-family: sans-serif; padding: 20px; }
-  .section { border: 1px solid #ccc; padding: 15px; margin-bottom: 10px; border-radius: 8px; }
-  .fixed { border-left: 5px solid #d9534f; background: #fff5f5; }
-  .title { font-weight: bold; color: #1a6b3c; font-size: 18px; }
-  .editor-zone { display: none; background: #eee; padding: 20px; margin-top: 20px; }
-</style>
+<title>テスト表示</title>
 </head>
 <body>
-  <h1>タケダ造園 重要事項説明書</h1>
-  <button onclick="enterEdit()">⚙️ 編集モードへ入る（要パスワード）</button>
+  <h1 id="status">表示テスト中...</h1>
   <div id="app"></div>
 
-  <div id="editMode" class="editor-zone">
-    <h2>編集・管理画面</h2>
-    <div id="editorContent"></div>
-    <button onclick="saveAll()">💾 全データを保存</button>
-  </div>
-
 <script>
-// 1. 全データ（統合版）
-const DB = {
-  fixedItems: ["工事中", "キャンセルポリシー", "工事完成後の保証", "契約にあたり"],
-  data: [
-     // ここに全37項目が入る
-     { label: "工事中", checked: true, content: "工事期間中の注意点..." },
-     { label: "剪定", checked: false, content: "剪定作業について..." }
-  ]
+window.onload = function() {
+    const app = document.getElementById('app');
+    // 強制的に「工事中」を表示させる
+    app.innerHTML = "<div style='border:1px solid red; padding:20px;'><h1>工事中</h1><p>このデータが表示されればプログラムは正常です。</p></div>";
+    document.getElementById('status').innerText = "表示完了";
 };
-
-// 2. 「ページが開いた瞬間に表示する」命令
-function render() {
-  const app = document.getElementById('app');
-  app.innerHTML = "";
-  DB.data.forEach(sec => {
-    if (sec.checked || DB.fixedItems.includes(sec.label)) {
-      const div = document.createElement('div');
-      div.className = `section ${DB.fixedItems.includes(sec.label) ? 'fixed' : ''}`;
-      div.innerHTML = `<div class="title">${sec.label} ${DB.fixedItems.includes(sec.label) ? '🔒' : ''}</div>
-                       <div class="content">${sec.content}</div>`;
-      app.appendChild(div);
-    }
-  });
-}
-
-function enterEdit() {
-  const pw = prompt("パスワード");
-  if (pw === "takezo") { document.getElementById('editMode').style.display = "block"; }
-  else { alert("パスワードが違います"); }
-}
-
-function saveAll() { alert("保存しました"); }
-
-// 3. これが重要：ページを開いたら即座にrenderを実行
-window.onload = render;
 </script>
 </body>
 </html>
