@@ -1,67 +1,17 @@
 <!DOCTYPE html>
 <html lang="ja">
-<head>
-<meta charset="UTF-8">
-<title>重要事項説明書（最終修復版）</title>
-<style>
-  /* 以前の正常な表示を維持するためのスタイルです */
-  body { font-family: sans-serif; padding: 20px; }
-  .sc { margin-bottom: 20px; border: 1px solid #ccc; padding: 15px; border-radius: 8px; }
-  .sh { font-weight: bold; color: #0f4526; font-size: 18px; margin-bottom: 10px; }
-  .ct { white-space: pre-wrap; font-size: 14px; }
-  .sec-img { max-width: 240px; margin: 10px; border: 1px solid #ddd; }
-  .img-card { display: inline-block; text-align: center; }
-  .img-cap { font-size: 12px; }
-</style>
-</head>
+<head><meta charset="UTF-8"><title>重要事項説明書 復元版</title></head>
 <body>
-  <div id="app">
-    <h1>重要事項説明書を読み込んでいます...</h1>
-  </div>
-
+<div id="app">復元中...</div>
 <script>
 window.onload = function() {
+  const data = JSON.parse(localStorage.getItem('juyo_v8')); // v8からデータを引き出します
   const app = document.getElementById('app');
+  app.innerHTML = "<h1>復元データ</h1>";
   
-  // 1. 本物のデータを取得
-  const v9 = localStorage.getItem('juyo_v9');
-  const imgData = localStorage.getItem('juyo_img_data');
-  
-  if (!v9) {
-    app.innerHTML = "<h2>データが見つかりません</h2><p>現在このブラウザには重要事項説明書のデータが入っていないようです。いつもデータ入力を行っているパソコン・ブラウザで再度アクセスしてください。</p>";
-    return;
-  }
-
-  // 2. データを復元して表示
-  const data = JSON.parse(v9).data.construction;
-  const images = imgData ? JSON.parse(imgData) : {};
-  
-  app.innerHTML = "<h1>重要事項説明書（Takezo Farm）</h1>";
-
-  data.forEach((sec, idx) => {
-    if (sec.checked) {
-      const div = document.createElement('div');
-      div.className = 'sc';
-      div.innerHTML = `<div class="sh">${idx + 1}. ${sec.label}</div>`;
-      
-      sec.content.forEach(c => {
-        const p = document.createElement('p');
-        p.className = 'ct';
-        p.innerText = c.text || c;
-        div.appendChild(p);
-      });
-
-      // 写真の復元
-      if (images[sec.label]) {
-        images[sec.label].forEach(img => {
-          const card = document.createElement('div');
-          card.className = 'img-card';
-          card.innerHTML = `<img src="data:${img.mime};base64,${img.b64}" class="sec-img"><div class="img-cap">${img.caption}</div>`;
-          div.appendChild(card);
-        });
-      }
-      app.appendChild(div);
-    }
+  // ここに全37項目を表示する処理を入れます
+  data.forEach((item, i) => {
+    app.innerHTML += `<div>${i+1}. ${item.label}</div>`;
   });
 };
 </script>
