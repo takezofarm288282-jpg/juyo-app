@@ -2,64 +2,81 @@
 <html lang="ja">
 <head>
 <meta charset="UTF-8">
-<title>重要事項説明書</title>
+<title>タケダ造園 重要事項説明書（完全復元版）</title>
 <style>
   body { font-family: sans-serif; padding: 20px; line-height: 1.6; }
-  h1 { color: #0f4526; }
-  .section { margin-bottom: 30px; border: 1px solid #ccc; padding: 20px; border-radius: 10px; }
-  .title { font-weight: bold; color: #1a6b3c; font-size: 20px; margin-bottom: 10px; }
-  .text { white-space: pre-wrap; margin-bottom: 10px; }
-  .img-container { display: flex; flex-wrap: wrap; gap: 10px; }
-  .sec-img { max-width: 200px; border: 1px solid #ddd; }
+  .section { margin-bottom: 25px; border-bottom: 1px solid #ddd; padding-bottom: 15px; }
+  .label { font-weight: bold; color: #1a6b3c; font-size: 18px; margin-bottom: 10px; }
+  .content { white-space: pre-wrap; font-size: 14px; margin-bottom: 5px; }
 </style>
 </head>
 <body>
-  <div id="app"><h1>データを読み込んでいます...</h1></div>
+  <h1>重要事項説明書 (Takezo Farm)</h1>
+  <div id="app">読み込み中...</div>
+
 <script>
 window.onload = function() {
-  const app = document.getElementById('app');
-  const v9 = localStorage.getItem('juyo_v9');
-  const imgData = localStorage.getItem('juyo_img_data');
-  
-  if (!v9) {
-    app.innerHTML = "<h1>エラー</h1><p>データが見つかりません。別のブラウザで開いている可能性があります。</p>";
-    return;
-  }
+    // 武田様からいただいた完全なデータ構造を定義
+    const fullData = <REPLACE_WITH_YOUR_JSON_DATA>; <!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<title>タケダ造園 重要事項説明書（完全復元版）</title>
+<style>
+  body { font-family: sans-serif; padding: 20px; line-height: 1.6; }
+  .section { margin-bottom: 25px; border-bottom: 1px solid #ddd; padding-bottom: 15px; }
+  .label { font-weight: bold; color: #1a6b3c; font-size: 18px; margin-bottom: 10px; }
+  .content { white-space: pre-wrap; font-size: 14px; margin-bottom: 5px; }
+</style>
+</head>
+<body>
+  <h1>重要事項説明書 (Takezo Farm)</h1>
+  <div id="app">読み込み中...</div>
 
-  const data = JSON.parse(v9).data;
-  const images = imgData ? JSON.parse(imgData) : {};
-  
-  app.innerHTML = "<h1>重要事項説明書（全データ復元版）</h1>";
+<script>
+window.onload = function() {
+    // 武田様からいただいた完全なデータ構造を定義
+    const fullData = <REPLACE_WITH_YOUR_JSON_DATA>; 
 
-  // サッパリーズとTakezo Farmの両方を表示
-  ['service', 'construction'].forEach(type => {
-      if(data[type]) {
-          data[type].forEach((sec, idx) => {
-              if(sec.checked) {
-                  const div = document.createElement('div');
-                  div.className = 'section';
-                  div.innerHTML = `<div class="title">${sec.label}</div>`;
-                  
-                  sec.content.forEach(c => {
-                      const p = document.createElement('p');
-                      p.className = 'text';
-                      p.innerText = c.text || c;
-                      div.appendChild(p);
-                  });
+    const app = document.getElementById('app');
+    app.innerHTML = "";
 
-                  if (images[sec.label]) {
-                      const imgDiv = document.createElement('div');
-                      imgDiv.className = 'img-container';
-                      images[sec.label].forEach(img => {
-                          imgDiv.innerHTML += `<div class="img-card"><img src="data:${img.mime};base64,${img.b64}" class="sec-img"><div class="img-cap">${img.caption}</div></div>`;
-                      });
-                      div.appendChild(imgDiv);
-                  }
-                  app.appendChild(div);
-              }
-          });
-      }
-  });
+    // データの種類（construction）をループして全項目表示
+    fullData.data.construction.forEach((sec, idx) => {
+        const div = document.createElement('div');
+        div.className = 'section';
+        div.innerHTML = `<div class="label">${idx + 1}. ${sec.label}</div>`;
+        
+        sec.content.forEach(c => {
+            const p = document.createElement('p');
+            p.className = 'content';
+            p.innerText = c.text || c;
+            div.appendChild(p);
+        });
+        app.appendChild(div);
+    });
+};
+</script>
+</body>
+</html>
+
+    const app = document.getElementById('app');
+    app.innerHTML = "";
+
+    // データの種類（construction）をループして全項目表示
+    fullData.data.construction.forEach((sec, idx) => {
+        const div = document.createElement('div');
+        div.className = 'section';
+        div.innerHTML = `<div class="label">${idx + 1}. ${sec.label}</div>`;
+        
+        sec.content.forEach(c => {
+            const p = document.createElement('p');
+            p.className = 'content';
+            p.innerText = c.text || c;
+            div.appendChild(p);
+        });
+        app.appendChild(div);
+    });
 };
 </script>
 </body>
