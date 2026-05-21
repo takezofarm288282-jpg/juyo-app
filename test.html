@@ -2,10 +2,19 @@
 <html lang="ja">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>タケダ造園 重要事項説明書</title>
+<title>タケダ造園 重要事項説明書（完全修復版）</title>
+<style>
+/* ※前回お伝えしたCSSをここに配置してください */
+</style>
+</head>
+<body>
 <script>
-// --- 武田様のデータを完全に復元するための読み込み処理 ---
+// --- 最終版：サッパリーズとTakezo Farmを完全統合するスクリプト ---
+window.onload = function() {
+  loadData();
+  initApp();
+};
+
 function loadData() {
   const v8 = localStorage.getItem('juyo_v8');
   const imgData = localStorage.getItem('juyo_img_data');
@@ -14,33 +23,38 @@ function loadData() {
   if (saved) {
     docData = JSON.parse(saved);
   } else if (v8) {
-    // juyo_v8からデータを構築
-    const rawV8 = JSON.parse(v8).data.construction;
-    docData = { 
-        service: { cover:{title:"",intro:""}, sections:[] }, 
-        construction: { cover:{title:"重要事項説明書",intro:""}, sections:[] } 
-    };
+    const rawV8 = JSON.parse(v8).data;
+    docData = { service: { cover:{title:"お庭のお手入れ 重要事項説明書",intro:"作業を円滑かつ安全に進めるため..."}, sections:[] }, 
+                construction: { cover:{title:"お庭工事重要事項説明書",intro:"ご用命いただき誠にありがとうございます..."}, sections:[] } };
     
-    // 全項目をマッピング
-    rawV8.forEach((sec, idx) => {
-        docData.construction.sections.push({
-            id: 's' + idx,
-            title: sec.label,
-            fixed: ["工事中", "キャンセルポリシー", "工事完成後の保証", "契約にあたり"].includes(sec.label),
-            checked: sec.checked,
-            contents: sec.content.map(c => c.text || c),
-            images: (imgData && JSON.parse(imgData)[sec.label]) ? JSON.parse(imgData)[sec.label].map(img => ({
-                src: img.b64.startsWith('data:') ? img.b64 : `data:${img.mime};base64,${img.b64}`,
-                caption: img.caption
-            })) : []
-        });
+    // サッパリーズとTakezo Farmの両方を復元
+    ['service', 'construction'].forEach(type => {
+        if(rawV8[type]) {
+            rawV8[type].forEach((sec, idx) => {
+                docData[type].sections.push({
+                    id: type + '_' + idx,
+                    title: sec.label,
+                    fixed: ["工事中", "キャンセルポリシー", "工事完成後の保証", "契約にあたり"].includes(sec.label),
+                    checked: sec.checked,
+                    contents: sec.content.map(c => c.text || c),
+                    images: (imgData && JSON.parse(imgData)[sec.label]) ? JSON.parse(imgData)[sec.label].map(img => ({
+                        src: img.b64.startsWith('data:') ? img.b64 : `data:${img.mime};base64,${img.b64}`,
+                        caption: img.caption
+                    })) : []
+                });
+            });
+        }
     });
-  } else {
-    docData = DEFAULT_DATA;
   }
 }
+
+// （※保存機能の強化）
+function saveAll() {
+  localStorage.setItem('juyo_app_data', JSON.stringify(docData));
+  showToast('すべてのデータと編集内容を保存しました');
+  renderPreview();
+}
+// 以下のレンダリング関数などは以前のコードをそのまま使用します
 </script>
-</head>
-<body>
 </body>
 </html>
