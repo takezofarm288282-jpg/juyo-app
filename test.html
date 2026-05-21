@@ -849,16 +849,23 @@ async function loadFromGitHub() {
     var res = await fetch(url);
     if(!res.ok) return;
     var saved = await res.json();
-    if(saved.data) data = cleanData(saved.data);
     if(saved.covers) COVERS = saved.covers;
     if(saved.fixed) FIXED_CHECKED = saved.fixed;
     if(saved.imgData) IMG_DATA = saved.imgData;
-    // 起動時は固定項目以外のチェックをすべて外す
-    var docs = ['service','construction'];
-    for(var d=0; d<docs.length; d++) {
-      for(var i=0; i<data[docs[d]].length; i++) {
-        if(!isFixed(docs[d], data[docs[d]][i].label)) {
-          data[docs[d]][i].checked = false;
+    if(saved.data) {
+      data = saved.data;
+      // 不正項目を除去＋固定項目以外チェックをすべて外す
+      var docs2 = ['service','construction'];
+      for(var d2=0; d2<docs2.length; d2++) {
+        data[docs2[d2]] = data[docs2[d2]].filter(function(item) {
+          return item.label && item.label !== '新しい項目' && item.label.trim() !== '';
+        });
+        for(var i2=0; i2<data[docs2[d2]].length; i2++) {
+          if(!isFixed(docs2[d2], data[docs2[d2]][i2].label)) {
+            data[docs2[d2]][i2].checked = false;
+          } else {
+            data[docs2[d2]][i2].checked = true;
+          }
         }
       }
     }
