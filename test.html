@@ -1,19 +1,46 @@
 <!DOCTYPE html>
 <html lang="ja">
-<head><meta charset="UTF-8"><title>重要事項説明書 復元版</title></head>
-<body>
-<div id="app">復元中...</div>
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>タケダ造園 重要事項説明書</title>
 <script>
-window.onload = function() {
-  const data = JSON.parse(localStorage.getItem('juyo_v8')); // v8からデータを引き出します
-  const app = document.getElementById('app');
-  app.innerHTML = "<h1>復元データ</h1>";
-  
-  // ここに全37項目を表示する処理を入れます
-  data.forEach((item, i) => {
-    app.innerHTML += `<div>${i+1}. ${item.label}</div>`;
-  });
-};
+// --- 武田様のデータを完全に復元するための読み込み処理 ---
+function loadData() {
+  const v8 = localStorage.getItem('juyo_v8');
+  const imgData = localStorage.getItem('juyo_img_data');
+  const saved = localStorage.getItem('juyo_app_data');
+
+  if (saved) {
+    docData = JSON.parse(saved);
+  } else if (v8) {
+    // juyo_v8からデータを構築
+    const rawV8 = JSON.parse(v8).data.construction;
+    docData = { 
+        service: { cover:{title:"",intro:""}, sections:[] }, 
+        construction: { cover:{title:"重要事項説明書",intro:""}, sections:[] } 
+    };
+    
+    // 全項目をマッピング
+    rawV8.forEach((sec, idx) => {
+        docData.construction.sections.push({
+            id: 's' + idx,
+            title: sec.label,
+            fixed: ["工事中", "キャンセルポリシー", "工事完成後の保証", "契約にあたり"].includes(sec.label),
+            checked: sec.checked,
+            contents: sec.content.map(c => c.text || c),
+            images: (imgData && JSON.parse(imgData)[sec.label]) ? JSON.parse(imgData)[sec.label].map(img => ({
+                src: img.b64.startsWith('data:') ? img.b64 : `data:${img.mime};base64,${img.b64}`,
+                caption: img.caption
+            })) : []
+        });
+    });
+  } else {
+    docData = DEFAULT_DATA;
+  }
+}
 </script>
+</head>
+<body>
 </body>
 </html>
